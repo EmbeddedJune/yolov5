@@ -62,16 +62,13 @@ if __name__ == '__main__':
 
     # ONNX export
     try:
-        import onnx
-
-        print('\nStarting ONNX export with onnx %s...' % onnx.__version__)
         f = opt.weights.replace('.pt', '.onnx')  # filename
         torch.onnx.export(model, img, f, verbose=False, opset_version=12, input_names=['images'],
                           output_names=['classes', 'boxes'] if y is None else ['output'])
 
         # Checks
-        onnx_model = onnx.load(f)  # load onnx model
-        onnx.checker.check_model(onnx_model)  # check onnx model
+        onnx_model = torch.onnx.load(f)  # load onnx model
+        torch.onnx.checker.check_model(onnx_model)  # check onnx model
         # print(onnx.helper.printable_graph(onnx_model.graph))  # print a human readable model
         print('ONNX export success, saved as %s' % f)
     except Exception as e:
